@@ -1,23 +1,20 @@
-# Blueprint de Render: https://render.com/docs/blueprint-spec
 services:
   - type: web
     name: lccounter
     runtime: docker
-    plan: starter            # el disco persistente requiere un plan de pago
-    region: oregon
+    plan: starter
     dockerfilePath: ./Dockerfile
     healthCheckPath: /api/sesion
-    autoDeploy: true
     disk:
       name: espacio-trabajo
       mountPath: /data
       sizeGB: 5
     envVars:
       - key: LCCOUNTER_ADMIN_USUARIO
-        sync: false          # Render la pide al crear el servicio
+        sync: false
       - key: LCCOUNTER_ADMIN_CLAVE
         sync: false
       - key: LCCOUNTER_ADMIN_NOMBRE
         sync: false
       - key: ANTHROPIC_API_KEY
-        sync: false          # opcional: solo para el asistente
+        sync: false
