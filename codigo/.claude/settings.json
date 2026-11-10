@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "deny": [
+      "Bash(*-m agente* aprobar *)",
+      "Bash(*-m agente* aprobar-receta *)",
+      "Bash(*-m agente* aprobar-propuesta *)",
+      "Bash(*-m agente* revertir *)",
+      "Bash(*-m agente* cambiar-nit *)",
+      "Bash(*-m agente* devolver *)",
+      "Bash(*-m agente* auditar *)",
+      "Bash(*-m agente* rsi-aprobar *)",
+      "Bash(*-m agente* rsi-rechazar *)",
+      "Bash(*-m agente* rsi-restaurar *)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Write|Edit|MultiEdit|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/proteger_decisiones_revisor.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

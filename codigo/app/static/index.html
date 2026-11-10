@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LCCOUNTER · Versión mejorada</title>
+<link rel="icon" href="logo.png">
+<link rel="stylesheet" href="styles.css">
+<script>try { const t = localStorage.getItem("lccounter-tema"); if (t) document.documentElement.dataset.theme = t; } catch (_) {}</script>
+</head>
+<body>
+<aside class="lateral">
+  <div class="perfil" id="perfil" hidden>
+    <button type="button" class="avatar" id="avatar-btn" title="Cambiar mi imagen"><span id="avatar-ini"></span><img id="avatar-img" alt="" hidden></button>
+    <div class="perfil-txt"><b id="perfil-nombre"></b><small id="perfil-rol"></small></div>
+    <input type="file" id="f-avatar" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+    <button type="button" class="menu-btn" id="menu-btn" aria-label="Abrir el menú" aria-expanded="false" aria-controls="lateral-cuerpo">☰</button>
+  </div>
+  <div class="lateral-cuerpo" id="lateral-cuerpo">
+  <div class="marca"><img src="logo.png" alt="LC Counter"><div class="txt"><b>LCCOUNTER</b><small>Revisoría Fiscal PH · versión mejorada</small></div>
+    <button type="button" class="plegar-btn" id="plegar-btn" aria-label="Plegar la barra lateral" title="Plegar la barra lateral">«</button></div>
+  <nav>
+    <a href="#panel" data-vista="panel"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span><span class="txt">Panel del lote</span></a>
+    <a href="#cargar" data-vista="cargar"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4m0 0-4 4m4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg></span><span class="txt">Cargar y validar</span></a>
+    <a href="#cliente" data-vista="cliente"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l2 2 4-4"/><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/></svg></span><span class="txt">Hallazgos y decisión</span></a>
+    <a href="#mejora" data-vista="mejora"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-4M4 4v4h4"/><path d="M4 13a8 8 0 0 0 14.9 4M20 20v-4h-4"/></svg></span><span class="txt">Mejora continua</span></a>
+    <a href="#conceptos" data-vista="conceptos"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v4h3l6 4V6L7 10z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg></span><span class="txt">Conceptos del revisor</span></a>
+    <a href="#normativa" data-vista="normativa"><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h6M8 11h6"/></svg></span><span class="txt">Base normativa</span></a>
+    <a href="#asistente" data-vista="asistente" class="nav-auditin"><span class="ico"><img src="auditin.png" alt=""></span><span class="txt">Auditin</span></a>
+    <a href="#tiempos" data-vista="tiempos" data-rol="admin,revisor" hidden><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg></span><span class="txt">Tiempos y registro</span></a>
+    <a href="#usuarios" data-vista="usuarios" data-rol="admin" hidden><span class="ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg></span><span class="txt">Usuarios</span></a>
+  </nav>
+  <div class="periodo-caja">
+    <label for="periodo-btn">Periodo</label>
+    <input id="periodo" type="hidden">
+    <button type="button" class="periodo-btn" id="periodo-btn" aria-haspopup="dialog" aria-expanded="false"><span id="periodo-txt">—</span><span aria-hidden="true">📅</span></button>
+    <div class="calendario" id="calendario" role="dialog" aria-label="Elegir periodo" hidden>
+      <div class="cal-cab"><button type="button" class="cal-nav" id="cal-ant" aria-label="Año anterior">‹</button><b id="cal-anio"></b><button type="button" class="cal-nav" id="cal-sig" aria-label="Año siguiente">›</button></div>
+      <div class="cal-meses" id="cal-meses"></div>
+      <div class="cal-pie"><button type="button" class="btn sec chico" id="cal-hoy">Mes actual</button></div>
+    </div>
+  </div>
+  <button type="button" class="tema-btn" id="tema-btn" aria-label="Cambiar entre modo día y noche"><span id="tema-ico">☾</span><span id="tema-txt">Modo noche</span></button>
+  <div class="usuario-caja" id="usuario-caja"></div>
+  <p class="principio">Python calcula, la IA organiza y redacta, <b>el profesional decide.</b></p>
+  <p class="credito">Desarrollado por <b>Quantika IA SAS</b></p>
+  </div>
+</aside>
+
+<main>
+  <!-- PANEL -->
+  <section id="v-panel" class="vista">
+    <header class="cab"><div><h1>Panel del lote</h1><p class="sub" id="panel-sub"></p></div>
+      <button class="btn" id="btn-validar-todo">Validar todo el lote</button></header>
+    <div class="kpis" id="kpis"></div>
+    <div class="caja"><h2>Cola de validación del revisor</h2><ol id="cola" class="cola"></ol></div>
+    <div class="caja"><div class="cab-mini"><h2>Clientes</h2><span class="nota" id="filtro-cuenta"></span></div>
+      <div class="filtros"><input type="search" id="f-buscar" placeholder="Buscar por copropiedad o NIT…" aria-label="Buscar cliente">
+        <select id="f-estado" aria-label="Filtrar por estado"></select><select id="f-revisor" aria-label="Filtrar por revisor"></select>
+        <button type="button" class="btn sec chico" id="f-limpiar" hidden>Quitar filtros</button></div>
+      <div class="tabla-env"><table id="tabla-clientes"></table></div></div>
+  </section>
+
+  <!-- CARGAR -->
+  <section id="v-cargar" class="vista">
+    <header class="cab"><div><h1>Cargar y validar</h1><p class="sub">Suba el Excel de papeles de trabajo y, si lo tiene, el balance de prueba del software contable.</p></div></header>
+    <div class="dos">
+      <form class="caja" id="form-cargar">
+        <h2>Archivos del periodo</h2>
+        <label>Cliente<select id="c-cliente" required></select></label>
+        <div class="zona" id="zona-excel"><input type="file" id="f-excel" accept=".xlsx,.xlsm" hidden>
+          <b>Excel de papeles de trabajo</b><span>Arrastre aquí o haga clic · .xlsx</span><em id="n-excel"></em></div>
+        <div class="zona" id="zona-balance"><input type="file" id="f-balance" accept=".csv,.tsv,.txt,.xlsx" hidden>
+          <b>Balance de prueba (opcional)</b><span>Exporte del software contable · .csv .tsv .xlsx</span><em id="n-balance"></em></div>
+        <div class="acciones"><button class="btn" type="submit">Cargar y validar</button></div>
+        <pre class="log" id="log-cargar" hidden></pre>
+      </form>
+      <form class="caja" id="form-cliente">
+        <h2>Cliente nuevo</h2>
+        <label>NIT<input id="n-nit" placeholder="900.123.456-7" inputmode="numeric" required></label>
+        <label>Copropiedad<input id="n-copro" placeholder="Torres del Parque PH" required></label>
+        <label>Software contable<input id="n-soft" value="generico" pattern="[a-z0-9_]+"></label>
+        <label>Logo del cliente (opcional)<input id="n-logo" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><small class="ayuda">PNG, JPG, WEBP o SVG, hasta 3 MB. Sale arriba a la derecha al elegir el cliente.</small></label>
+        <p class="nota">El NIT será el identificador permanente del cliente. Al crearlo queda su carpeta de documentos. Después complete unidades, revisor y notas desde la ficha.</p>
+        <div class="acciones"><button class="btn sec" type="submit">Crear cliente</button></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- CLIENTE -->
+  <section id="v-cliente" class="vista">
+    <header class="cab"><div><h1 id="cl-titulo">Hallazgos y decisión</h1><p class="sub" id="cl-sub"></p></div>
+      <div class="cliente-marca"><select id="cl-select" aria-label="Elegir cliente"></select>
+        <button type="button" class="logo-cliente" id="cl-logo" title="Logo del cliente"><img id="cl-logo-img" alt="" hidden><span id="cl-logo-vacio">+ Logo</span></button>
+        <input type="file" id="f-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden></div></header>
+    <div id="cl-cuerpo"></div>
+  </section>
+
+  <!-- MEJORA -->
+  <section id="v-mejora" class="vista">
+    <header class="cab"><div><h1>Mejora continua supervisada</h1><p class="sub">El sistema propone; el revisor fiscal aprueba. Cada cambio se prueba contra los informes aprobados y es reversible.</p></div>
+      <div class="grupo"><button class="btn sec" id="btn-regresion">Prueba de regresión</button><button class="btn" id="btn-analizar">Analizar correcciones</button></div></header>
+    <div class="kpis" id="m-kpis"></div>
+    <div class="dos">
+      <div class="caja"><h2>Propuestas pendientes</h2><div id="m-propuestas"></div></div>
+      <div class="caja"><h2>¿Sirvió cada versión de la biblioteca?</h2><div id="m-versiones"></div>
+        <h2 class="mt">Borradores para la revisora</h2><div id="m-borradores"></div></div>
+    </div>
+    <div class="caja"><h2>Auditoría mensual por muestreo</h2>
+      <p class="nota">Elige al azar informes aprobados para que los revise un profesional distinto al que los aprobó.</p>
+      <div class="grupo"><label class="en-linea">Informes<input id="m-k" type="number" min="1" max="20" value="4"></label>
+        <button class="btn sec" id="btn-muestra">Generar muestra</button></div><div id="m-muestra"></div></div>
+  </section>
+
+  <!-- ASISTENTE -->
+  <section id="v-asistente" class="vista">
+    <header class="cab cab-auditin"><button type="button" class="cerrar-auditin" id="au-cerrar" aria-label="Cerrar Auditin y detener el video" title="Cerrar Auditin">× Cerrar</button><img src="auditin.png" alt="" class="auditin-cara"><div><h1>Auditin</h1><p class="sub" id="as-sub">Pregúntele todo sobre los clientes: su información, sus Excel, lo que salió en el informe y lo acordado en las reuniones. Las cifras vienen del espacio de trabajo con su fuente.</p></div></header>
+    <div class="chips" id="bases"></div>
+    <div class="chat caja">
+      <div class="mensajes" id="mensajes"></div>
+      <div class="sugerencias" id="sugerencias"></div>
+      <form id="form-chat" class="entrada">
+        <textarea id="pregunta" rows="2" placeholder="Pregúntele a Auditin. Ej.: ¿Qué hallazgos ALTA tiene Picasso y en qué celdas están?"></textarea>
+        <button class="btn" type="submit" id="btn-enviar">Preguntar</button>
+      </form>
+    </div>
+  </section>
+  <!-- NORMATIVA -->
+  <section id="v-normativa" class="vista">
+    <header class="cab"><div><h1>Base normativa</h1><p class="sub">Leyes, NIIF y manuales que el despacho carga. El asistente y las comunicaciones solo citan lo que está aquí, con documento y artículo.</p></div></header>
+    <div class="caja"><form id="n-buscar" class="grupo"><input name="q" placeholder="Buscar: «fondo de imprevistos», «cobro de cartera», «artículo 35»…" required>
+      <select name="cliente" id="n-cliente-b"></select><button class="btn">Buscar</button></form><div id="n-resultados"></div></div>
+    <div class="dos">
+      <div class="caja"><h2>Documentos cargados</h2><div id="n-docs"></div></div>
+      <form class="caja" id="n-form" data-rol="revisor,admin" hidden>
+        <h2>Cargar documento</h2>
+        <label>Título<input name="titulo" required placeholder="Ley 675 de 2001"></label>
+        <label>Tipo<select name="tipo" id="n-tipo"></select></label>
+        <label>Ámbito<select name="ambito" id="n-ambito"></select></label>
+        <label>Versión o fecha de compilación<input name="version" placeholder="Texto compilado a septiembre 2026"></label>
+        <label>Origen<input name="origen" placeholder="Fuente oficial o quién lo entregó"></label>
+        <div class="zona" id="zona-norma"><input type="file" id="f-norma" accept=".pdf,.docx,.txt,.md,.html,.htm" multiple hidden>
+          <b>Documento (una o varias partes)</b><span>PDF con texto, Word, página web guardada (.html), TXT o Markdown · hasta 60 MB</span></div>
+        <ol class="partes" id="n-partes"></ol>
+        <p class="nota">Si la norma está publicada en varias páginas (como la Ley 675 en la Secretaría del Senado), seleccione todas las partes: se unen en el orden de la lista como un solo documento. Use la versión vigente y de fuente oficial; un PDF escaneado sin texto no se puede indexar.</p>
+        <div class="acciones"><button class="btn">Cargar e indexar</button></div>
+      </form>
+    </div>
+    <div id="n-visor"></div>
+  </section>
+
+  <!-- CONFIGURACIÓN (fuera del menú: se abre con el botón ⚙ junto al usuario) -->
+  <section id="v-configuracion" class="vista">
+    <header class="cab"><div><h1>Configuración</h1><p class="sub">Proveedores de inteligencia artificial y automejora recursiva (RSI). Solo administradores pueden cambiarla.</p></div></header>
+    <div class="caja instructivo"><h2>Cómo obtener la clave de API de cada proveedor</h2>
+      <p class="nota">La clave es como una contraseña: se ve completa una sola vez al crearla. Cópiela, péguela aquí en «Clave de API» y no la envíe por correo ni chat. Todos los proveedores cobran por uso: hay que cargar saldo o un medio de pago en su consola.</p>
+      <details><summary><b>Claude (Anthropic)</b></summary><ol>
+        <li>Entre a <b>console.anthropic.com</b> y cree una cuenta (o ingrese con la del despacho).</li>
+        <li>En <b>Billing</b> agregue un medio de pago o compre créditos.</li>
+        <li>Vaya a <b>Settings → API Keys</b> y pulse <b>Create Key</b>. Póngale un nombre (por ejemplo «LCCOUNTER»).</li>
+        <li>Copie la clave (empieza por <code>sk-ant-</code>). Aquí: plantilla «Claude (Anthropic)», pegue la clave y guarde.</li></ol></details>
+      <details><summary><b>DeepSeek</b></summary><ol>
+        <li>Entre a <b>platform.deepseek.com</b> y cree una cuenta.</li>
+        <li>En <b>Top up</b> cargue saldo.</li>
+        <li>En <b>API keys</b> pulse <b>Create new API key</b> y cópiela (empieza por <code>sk-</code>).</li>
+        <li>Aquí: plantilla «DeepSeek» (la URL base se llena sola), pegue la clave y escriba el modelo tal como aparece en la documentación de DeepSeek.</li></ol></details>
+      <details><summary><b>OpenAI</b></summary><ol>
+        <li>Entre a <b>platform.openai.com</b> y cree una cuenta de organización.</li>
+        <li>En <b>Settings → Billing</b> agregue un medio de pago o saldo.</li>
+        <li>En <b>API keys</b> pulse <b>Create new secret key</b> y cópiela (empieza por <code>sk-</code>).</li>
+        <li>Aquí: plantilla «OpenAI», pegue la clave y escriba el modelo que vaya a usar.</li></ol></details>
+      <details open><summary><b>Sin internet: Ollama en este Mac (no necesita clave)</b></summary><ol>
+        <li>Ya está instalado con el modelo <code>qwen3:8b</code> y asignado a Auditin. Los datos no salen del equipo.</li>
+        <li>Para otro modelo: en la Terminal, <code>ollama pull nombre-del-modelo</code>, y agréguelo aquí en el proveedor «Ollama (local, sin internet)».</li>
+        <li>Ollama debe estar abierto (ícono de la llama en la barra de menú) para que Auditin responda.</li></ol></details>
+      <p class="nota">Después de guardar un proveedor, use «Probar» y asígnelo en «Qué proveedor usa cada función».</p>
+    </div>
+    <div class="caja"><h2>Proveedores de IA</h2>
+      <p class="nota">Claude se conecta con su SDK oficial; los demás por su API compatible con OpenAI. Las claves se guardan solo en este equipo y nunca se muestran completas.</p>
+      <div class="tabla-env"><table id="cfg-proveedores"></table></div>
+      <form id="cfg-prov-form" class="rejilla mt" data-admin hidden>
+        <label>Plantilla<select id="cfg-preset"></select></label>
+        <label>Identificador<input name="id" required pattern="[a-z0-9_\-]{2,30}" placeholder="openai"></label>
+        <label>Nombre<input name="nombre" required></label>
+        <label>Tipo<select name="tipo"><option value="anthropic">Claude (SDK de Anthropic)</option><option value="openai">Compatible con OpenAI</option></select></label>
+        <label class="ancho">URL base de la API<input name="base_url" placeholder="https://api.openai.com/v1 (vacío para Claude)"></label>
+        <label class="ancho">Clave de API<input name="api_key" type="password" autocomplete="off" placeholder="Déjela vacía para conservar la actual"></label>
+        <label class="ancho">Modelos (separados por coma)<input name="modelos" placeholder="nombre-del-modelo-1, nombre-del-modelo-2"></label>
+        <div class="acciones ancho"><button class="btn">Guardar proveedor</button></div>
+      </form>
+    </div>
+    <div class="caja"><h2>Qué proveedor usa cada función</h2><div id="cfg-usos"></div></div>
+    <div class="caja"><h2>Automejora recursiva (RSI)</h2>
+      <p class="nota"><b>Nivel 1:</b> genera plantillas de opinión candidatas, las mide contra cómo escribe realmente el revisor (con un caso reservado para la prueba) y solo conserva las que mejoran. <b>Nivel 2 (recursivo):</b> con los resultados reescribe su propia estrategia de mejora; la nueva estrategia compite con la vigente y solo la reemplaza si gana. <b>Nunca</b> modifica cálculos, reglas de validación ni código; todo queda versionado y es reversible.</p>
+      <form id="cfg-rsi-form" class="rejilla">
+        <label>Modo<select name="modo" id="cfg-rsi-modo"></select></label>
+        <label>Mejora mínima para aceptar (%)<input name="margen" type="number" min="0.5" max="50" step="0.5"></label>
+        <label>Candidatos por plantilla<input name="candidatos" type="number" min="1" max="6"></label>
+        <label>Hora del ciclo diario<input name="hora" type="time" required value="04:00"></label>
+        <p class="nota ancho">El ciclo corre solo todos los días a esta hora si la app está encendida (si estaba apagada, corre al encenderla ese día). La mejora aplica al <b>sistema</b> (plantillas de opinión y su estrategia; los mapeos y reglas los mejora la mejora continua con aprobación del revisor) y <b>nunca</b> a informes ya validados, que quedan congelados.</p>
+        <div class="acciones ancho"><button class="btn sec" data-admin>Guardar</button><button type="button" class="btn" id="cfg-rsi-ciclo">Ejecutar ciclo ahora</button></div>
+      </form>
+      <div id="cfg-rsi"></div>
+    </div>
+  </section>
+
+  <!-- CONCEPTOS DEL REVISOR -->
+  <section id="v-conceptos" class="vista">
+    <header class="cab"><div><h1>Conceptos del revisor fiscal</h1><p class="sub">Un concepto para todas las copropiedades cuando haga falta (no cada mes): texto explicativo, infografía con la norma y la opinión del revisor, y la norma como anexo. Sale un Word por copropiedad, con su nombre y su logo.</p></div></header>
+    <div class="dos">
+      <form class="caja" id="c-nuevo" data-rol="revisor" hidden>
+        <h2>Nuevo concepto</h2>
+        <label>Tema<input name="tema" required placeholder="Ej.: Nuevo plazo para aprobar estados financieros"></label>
+        <label>Opinión del revisor fiscal<textarea name="opinion" rows="6" required placeholder="Escriba su opinión y sus recomendaciones. La IA solo la explica y la ordena; no agrega opiniones."></textarea></label>
+        <label>Norma (búsqueda en la base normativa)<span class="grupo"><input id="c-buscar" placeholder="Ej.: Ley 675 artículo 35, fondo de imprevistos"><button type="button" class="btn sec" id="c-buscar-btn">Buscar</button></span></label>
+        <div id="c-fragmentos" class="fragmentos"></div>
+        <fieldset class="roles" id="c-clientes"><legend>Copropiedades</legend></fieldset>
+        <div class="acciones"><span class="nota" id="c-ia"></span><button class="btn">Redactar borrador</button></div>
+      </form>
+      <div class="caja"><h2>Conceptos</h2><div id="c-lista"></div></div>
+    </div>
+    <div id="c-detalle"></div>
+  </section>
+
+  <!-- TIEMPOS Y REGISTRO -->
+  <section id="v-tiempos" class="vista">
+    <header class="cab"><div><h1>Tiempos y registro</h1><p class="sub">Cuánto tiempo está cada usuario en línea, cuánto tarda el procesamiento de cada cliente y qué hizo cada quién.</p></div></header>
+    <div class="dos">
+      <div class="caja"><h2>Tiempo en línea por usuario</h2><p class="nota">Cuenta solo mientras la aplicación está abierta y visible.</p><div class="tabla-env"><table id="t-linea"></table></div></div>
+      <div class="caja"><h2>Tiempo de procesamiento por cliente</h2><p class="nota">Desde que se lee el Excel hasta que el informe queda listo para el revisor (última validación de cada periodo).</p><div class="tabla-env"><table id="t-proc"></table></div></div>
+    </div>
+    <div class="caja"><h2>Registro de acciones</h2><div class="tabla-env"><table id="t-registro"></table></div></div>
+  </section>
+
+  <!-- USUARIOS -->
+  <section id="v-usuarios" class="vista">
+    <header class="cab"><div><h1>Usuarios y roles</h1><p class="sub">Cada acción queda registrada con el nombre de quien la hizo. Quien aprueba un informe no puede auditarlo.</p></div></header>
+    <div class="dos">
+      <div class="caja"><h2>Usuarios</h2><div class="tabla-env"><table id="u-tabla"></table></div></div>
+      <form class="caja" id="u-form">
+        <h2>Nuevo usuario</h2>
+        <label>Nombre completo<input name="nombre" required placeholder="Como debe aparecer en las aprobaciones"></label>
+        <label>Usuario<input name="usuario" class="campo-usuario" required pattern="[a-z0-9._\-]{3,32}" title="3 a 32 caracteres: minúsculas, números, punto, guion o guion bajo (sin espacios ni tildes)" placeholder="nombre.apellido"><small class="ayuda">Minúsculas, números, punto o guion; sin espacios ni tildes. Ej.: ana.perez</small></label>
+        <fieldset class="roles" id="u-roles"></fieldset>
+        <label>Contraseña temporal<input name="clave" type="password" required minlength="10" autocomplete="new-password"></label>
+        <p class="nota">Mínimo 10 caracteres con mayúsculas, minúsculas y números. Deberá cambiarla al entrar.</p>
+        <div class="acciones"><button class="btn" type="submit">Crear usuario</button></div>
+      </form>
+    </div>
+    <div class="caja"><h2>Qué puede hacer cada rol</h2><p class="nota">Es lo que el sistema exige en cada acción. Un usuario puede tener varios roles.</p><div class="tabla-env"><table id="u-permisos"></table></div></div>
+    <div class="caja"><h2>Registro de accesos y acciones</h2><div class="tabla-env"><table id="u-registro"></table></div></div>
+  </section>
+</main>
+
+
+<div id="acceso" class="acceso" hidden>
+  <form class="caja acceso-caja" id="acceso-form" autocomplete="on">
+    <img src="logo.png" alt="LC Counter"><p class="acceso-marca">LCCOUNTER</p>
+    <h1 id="acceso-titulo">Ingresar</h1>
+    <p class="sub" id="acceso-sub"></p>
+    <div id="acceso-campos"></div>
+    <p class="error-txt" id="acceso-error" hidden></p>
+    <div class="acciones"><button class="btn" type="submit" id="acceso-btn">Ingresar</button></div>
+    <p class="credito">Desarrollado por <b>Quantika IA SAS</b></p>
+  </form>
+</div>
+
+<dialog id="dlg"><form method="dialog" id="dlg-form"><h2 id="dlg-titulo"></h2><div id="dlg-cuerpo"></div>
+  <div class="acciones"><button class="btn sec" value="cancelar" formnovalidate>Cancelar</button><button class="btn" value="ok" id="dlg-ok">Confirmar</button></div></form></dialog>
+<div id="aviso" class="aviso" role="status" hidden><span class="aviso-ico" id="aviso-ico"></span><span id="aviso-txt"></span><button type="button" class="aviso-x" id="aviso-x" aria-label="Cerrar aviso">×</button></div>
+<div id="cargando" class="cargando" hidden><div class="cargando-caja"><span class="giro"></span><b id="cargando-txt">Procesando…</b><small>Esto puede tardar unos minutos. No cierre la ventana.</small></div></div>
+<script src="app.js"></script>
+</body>
+</html>

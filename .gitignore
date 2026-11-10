@@ -1,0 +1,38 @@
+# --- Datos de clientes (NUNCA subir) ---
+espacio-trabajo/
+respaldo_*/
+codigo/ejemplos/
+codigo/config/picasso.yaml
+*.xlsx
+*.xlsm
+*.xls
+*.csv
+*.pptx
+*.pdf
+*.docx
+Panel_*.html
+Validacion_*.html
+*.jsonl
+*.log
+
+# --- Secretos ---
+.env
+.env.*
+*.pem
+*.key
+configuracion_ia.json
+usuarios.json
+sesiones.json
+
+# --- Entornos y cachés de Python ---
+.venv
+.venv*/
+.venv 2/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+salida/
+
+# --- Sistema ---
+.DS_Store

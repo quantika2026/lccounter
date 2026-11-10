@@ -1,0 +1,150 @@
+# Estructura del informe completo de Revisoría Fiscal (sigue el informe modelo 006-2026 de Picasso).
+# Cada entrada es una o varias diapositivas, en este orden. El contenido sale del Excel de papeles de trabajo;
+# aquí solo va lo que el Excel no trae: títulos de presentación, subtítulos y textos fijos del despacho.
+#
+# Tipos: portada · metodologia · seccion · objetivo_alcance · egresos · campo · conciliaciones · retencion ·
+#        actas_consejo · asamblea · financiera · contratos · polizas_manual · matriz_riesgo · texto_fijo · cierre
+# En «campo», la clave «campo» es el nombre del campo auditado en la hoja AUD CONT Y ADMON (columna B);
+# se busca sin importar mayúsculas, tildes ni puntuación.
+
+estructura:
+  - tipo: portada
+  - tipo: metodologia
+  - tipo: seccion
+    titulo: "Auditoría Regulatoria Contable, Tributaria y Administrativa"
+  - tipo: objetivo_alcance
+  - tipo: egresos
+  - tipo: campo
+    campo: "Factura electrónica"
+    titulo: "Facturación Electrónica"
+    subtitulo: "Cumplimiento en Documentación de Soportes de Comprobantes de Egreso"
+  - tipo: campo
+    campo: "Factura equivalente - Cuenta de cobro"
+    titulo: "Documento Equivalente y Cuenta de Cobro"
+    subtitulo: "Cumplimiento en Documentación de Soportes de Comprobantes de Egreso"
+  - tipo: campo
+    campo: "Aportes de seguridad social"
+    titulo: "Aportes de Seguridad Social"
+    subtitulo: "Cumplimiento de Documentación"
+  - tipo: campo
+    campo: "Soportes contables"
+    titulo: "Soportes y Documentación Contable"
+    subtitulo: "Organización y Control de Registros Financieros"
+  - tipo: campo
+    campo: "Soporte de pago"
+    titulo: "Soportes de Pago"
+    subtitulo: "Organización y Control de Registros Financieros"
+  - tipo: campo
+    campo: "RUT - Registro único tributario"
+    titulo: "Registro Único Tributario (RUT)"
+    subtitulo: "Validación de Proveedores y Contratistas"
+  - tipo: campo
+    campo: "Correspondencia y Sistema de archivo"
+    titulo: "Sistema de Archivo y Correspondencia"
+    subtitulo: "Cumplimiento de Normatividad en Gestión Documental"
+  - tipo: conciliaciones
+    titulo: "Conciliaciones Bancarias"
+  - tipo: campo
+    campo: ["Presentación información exógena", "Presentación información exógena Distrital"]
+    titulo: "Presentación de Reportes ante Autoridades Tributarias"
+    subtitulo: "Información exógena nacional y distrital"
+  - tipo: retencion
+    campo: "Obligaciones tributarias"
+    titulo: "Retención en la Fuente"
+    subtitulo: "Cumplimiento en Pagos de Impuestos"
+  - tipo: campo
+    campo: "Obligaciones tributarias años anteriores"
+    titulo: "Obligaciones Tributarias Años Anteriores"
+    subtitulo: "Seguimiento a Obligaciones Tributarias Pendientes"
+  - tipo: campo
+    campo: "Póliza de áreas comunes"
+    titulo: "Póliza de Zonas Comunes"
+    subtitulo: "Aseguramiento de los bienes comunes"
+  - tipo: campo
+    campo: "Legalidad del Software"
+    titulo: "Legalidad del Software"
+    subtitulo: "Derechos de autor y licenciamiento"
+  - tipo: campo
+    campo: "Libros oficiales"
+    titulo: "Libros Oficiales"
+    subtitulo: "Registro y actualización de libros contables"
+  - tipo: campo
+    campo: "Libro registro propietarios"
+    titulo: "Libro de Registro de Propietarios"
+    subtitulo: "Registro de propietarios y bases de datos"
+  - tipo: actas_consejo
+    campo: "Libro actas de consejo"
+    titulo: "Libros Actas de Consejo de Administración"
+  - tipo: campo
+    campo: "Implementación del sistema de gestión seguridad"
+    titulo: "Sistema de Gestión SG-SST"
+    subtitulo: "Implementación de Seguridad y Salud en el Trabajo (SG-SST)"
+  - tipo: campo
+    campo: "Implementación de la políticas de protección de datos"
+    titulo: "Protección de Datos Personales y Habeas Data"
+    subtitulo: "Implementación de las políticas de tratamiento de datos"
+  - tipo: campo
+    campo: "Libros actas de asamblea"
+    titulo: "Libro de Actas de Asamblea"
+    subtitulo: "Registro y publicación de las actas de asamblea"
+  - tipo: asamblea
+    bloque: "ordinaria"          # el último bloque de decisiones cuyo título contiene esta palabra
+  - tipo: financiera            # sección financiera completa (monetización … excedentes)
+  - tipo: seccion
+    titulo: "Auditoría de Control Interno"
+  - tipo: contratos
+    titulo: "Contratos Vigentes"
+  - tipo: polizas_manual
+    titulo: "Verificación de Pólizas frente al Manual de Contratación"
+  - tipo: matriz_riesgo
+  - tipo: texto_fijo
+    clave: solicitud_papeles
+  - tipo: cierre
+
+# Campos de la hoja AUD CONT Y ADMON que existen en el Excel pero NO van en el informe modelo.
+# Si quiere incluirlos, agréguelos arriba como tipo: campo.
+omitir_campos:
+  - "Situación Jurídica"
+
+semaforo:
+  ALTO:  {color: "70AD47", texto: "Nivel de cumplimiento del 100% por parte del responsable."}
+  ODM:   {color: "00B0F0", texto: "Oportunidad de Mejora. Nivel de cumplimiento al 90%, requiere acciones para funcionamiento adecuado."}
+  MEDIO: {color: "FFC000", texto: "Nivel de cumplimiento del 70% por parte del responsable."}
+  BAJO:  {color: "C00000", texto: "Nivel de cumplimiento del 50% por parte del responsable."}
+
+textos_fijos:
+  objetivo: >
+    Garantizar que todos los gastos estén debidamente soportados y que la copropiedad cumpla con sus
+    obligaciones ante la DIAN y otras autoridades competentes, evaluando la conformidad de los registros financieros.
+  alcance:
+    - Facturas electrónicas y equivalentes
+    - Soportes y documentación contable
+    - Validación del Registro Único Tributario (RUT)
+    - Cumplimiento de obligaciones tributarias
+    - Requisitos legales y normativos vigentes
+  solicitud_papeles:
+    titulo: "Solicitud de Papeles de Trabajo"
+    intro: >
+      Se requiere a la administración y contabilidad disponibilidad de la información para la elaboración del
+      informe de Revisoría, a más tardar el día décimo (10) calendario del mes:
+    items:
+      - Estado de situación financiera acumulado firmado por Administrador y contador (informe sistema contable PDF)
+      - Estado de resultados integral acumulado firmado por RL y contador (informe del sistema contable PDF)
+      - Ejecución presupuestal acumulada y mensual firmada (sistema contable PDF)
+      - Informe de cartera por edades con número de inmuebles (formato Excel y PDF)
+      - Informe de cuentas por pagar detallado del sistema contable (PDF)
+      - Informe ERI y ESF comparativo mes a mes (sistema contable PDF)
+      - Libro auxiliar (movimiento cuenta) enero a la fecha de cierre de la cuenta gastos (5) (sistema, informe PDF)
+      - Listado consecutivo de comprobantes de egreso (sistema)
+      - Conciliaciones bancarias (extracto, libro y notas bancarias)
+      - Presentación, pago y libro auxiliar de retención en la fuente
+      - Informe de cobro de cartera de abogado
+      - Informe de gestión administrativa
+      - Copia de las actas de las reuniones del consejo llevadas a cabo
+      - Copia de los contratos celebrados en el mes anterior
+      - Bitácoras de mantenimientos
+      - Carpeta de impuestos
+  cierre:
+    lema: "Comprometidos con la transparencia y solidez de su copropiedad"
+    correo: "revisorfiscal@lccounter.com"
+    web: "www.lccounter.com"
