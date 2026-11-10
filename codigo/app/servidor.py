@@ -116,7 +116,9 @@ ADMIN = requiere("admin")
 
 
 def _cookie(resp: Response, token: str):
-    resp.set_cookie(seguridad.COOKIE, token, httponly=True, samesite="strict", max_age=seguridad.DURACION, path="/")
+    segura = os.environ.get("LCCOUNTER_COOKIE_SEGURA") == "1"     # en la nube (HTTPS) la cookie viaja solo cifrada
+    resp.set_cookie(seguridad.COOKIE, token, httponly=True, samesite="strict", secure=segura,
+                    max_age=seguridad.DURACION, path="/")
 
 
 class Login(BaseModel):
@@ -1641,20 +1643,42 @@ def preguntar(p: Pregunta, u=Depends(CUALQUIERA)):
 app.mount("/", StaticFiles(directory=Path(__file__).parent / "static", html=True), name="static")
 
 
+def _admin_desde_entorno():
+    """En un servidor público el administrador inicial se crea con variables de entorno, así nadie más
+    puede ocupar la pantalla de primer uso."""
+    usuario = os.environ.get("LCCOUNTER_ADMIN_USUARIO", "").strip()
+    clave = os.environ.get("LCCOUNTER_ADMIN_CLAVE", "")
+    if USU.hay_usuarios() or not usuario or not clave:
+        return
+    nombre = os.environ.get("LCCOUNTER_ADMIN_NOMBRE", "").strip() or usuario
+    u = USU.crear(usuario, nombre, ["admin", "revisor"], clave)
+    USU.poner_clave(u["usuario"], clave, temporal=False)
+    USU.anotar(u["usuario"], "configurar", "administrador inicial (variables de entorno)")
+    print(f"Administrador inicial «{u['usuario']}» creado desde las variables de entorno.")
+
+
 def main():
     global ESP, USU
     ap = argparse.ArgumentParser(description="Aplicación web LCCOUNTER")
     ap.add_argument("--raiz", default=str(ESP.raiz))
-    ap.add_argument("--puerto", type=int, default=8790)
+    ap.add_argument("--puerto", type=int, default=int(os.environ.get("PORT", 8790)))
+    ap.add_argument("--host", default=os.environ.get("LCCOUNTER_HOST", "127.0.0.1"),
+                    help="127.0.0.1 (solo este equipo, por defecto) o 0.0.0.0 en un servidor en la nube")
     a = ap.parse_args()
     ESP = Espacio(Path(a.raiz))
+    ESP.raiz.mkdir(parents=True, exist_ok=True)
     USU = seguridad.Usuarios(ESP.raiz)
     seguridad.persistir_sesiones(ESP.raiz)          # reiniciar la app no cierra la sesión de quien la usa
+    _admin_desde_entorno()
+    publico = a.host not in ("127.0.0.1", "localhost", "::1")
+    if publico and not USU.hay_usuarios():
+        sys.exit("En un servidor público defina LCCOUNTER_ADMIN_USUARIO y LCCOUNTER_ADMIN_CLAVE: "
+                 "sin ellas cualquiera podría crear el administrador.")
     import uvicorn
-    print(f"LCCOUNTER en http://127.0.0.1:{a.puerto} · espacio {ESP.raiz}")
+    print(f"LCCOUNTER en http://{a.host}:{a.puerto} · espacio {ESP.raiz}")
     if not USU.hay_usuarios():
         print("Primer uso: abra la aplicación para crear el usuario administrador.")
-    uvicorn.run(app, host="127.0.0.1", port=a.puerto)       # solo local: el espacio tiene datos de clientes
+    uvicorn.run(app, host=a.host, port=a.puerto, proxy_headers=publico, forwarded_allow_ips="*" if publico else None)
 
 
 if __name__ == "__main__":

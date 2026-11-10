@@ -1,0 +1,12 @@
+.git
+espacio-trabajo
+respaldo_*
+ajustes_carpeta_claude
+**/.venv*
+**/__pycache__
+**/.pytest_cache
+codigo/ejemplos
+codigo/tests
+*.xlsx
+*.pptx
+*.pdf
