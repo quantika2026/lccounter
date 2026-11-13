@@ -65,9 +65,12 @@ def render(pptx: Path, carpeta_vista: Path, escala: float = 1.6) -> tuple[str, i
         tmp = destino.with_name(h + "_tmp")
         shutil.rmtree(tmp, ignore_errors=True)
         tmp.mkdir(parents=True)
-        pdf = convertir(pptx, "pdf", tmp, timeout=300)
+        pdf = convertir(pptx, "pdf", tmp, timeout=600)
         if not pdf:
-            raise RuntimeError("LibreOffice no pudo convertir el informe a PDF.")
+            from revisoria import libreoffice
+            shutil.rmtree(tmp, ignore_errors=True)
+            raise RuntimeError("LibreOffice no pudo convertir el informe a PDF"
+                               + (f": {libreoffice.ultimo_error}" if libreoffice.ultimo_error else "."))
         doc = pymupdf.open(pdf)
         for i, pagina in enumerate(doc, 1):
             pagina.get_pixmap(matrix=pymupdf.Matrix(escala, escala)).save(tmp / f"{i:03d}.png")

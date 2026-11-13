@@ -1241,9 +1241,11 @@ def ver_pdf(periodo: str, cid: str, version: str = "actual", u=Depends(CUALQUIER
     pdf = next(iter(destino.glob("*.pdf")), None) if destino.exists() else None
     if not pdf:
         with diapositivas._candado:
-            pdf = convertir(origen, "pdf", destino, timeout=300)
+            pdf = convertir(origen, "pdf", destino, timeout=600)
     if not pdf:
-        raise HTTPException(503, "No se pudo convertir el informe a PDF (¿LibreOffice instalado?).")
+        from revisoria import libreoffice
+        raise HTTPException(503, "No se pudo convertir el informe a PDF: "
+                            + (libreoffice.ultimo_error or "¿LibreOffice instalado?"))
     return FileResponse(pdf, media_type="application/pdf",
                         headers={"Content-Disposition": f'inline; filename="{origen.stem}.pdf"'})
 

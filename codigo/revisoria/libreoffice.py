@@ -1,8 +1,12 @@
 """Ubicación de LibreOffice y conversión de archivos (PDF del informe aprobado, recálculo de Excel)."""
 from __future__ import annotations
 
+import os
 import shutil
+import signal
 import subprocess
+import sys
+import tempfile
 from pathlib import Path
 
 # En macOS la instalación normal no deja «soffice» en el PATH
@@ -22,10 +26,49 @@ def convertir(ruta: Path, formato: str, carpeta: Path, timeout: int = 240) -> Pa
     soffice = buscar()
     if not soffice:
         return None
-    subprocess.run([soffice, "--headless", "--convert-to", formato, "--outdir", str(carpeta), str(ruta)],
-                   capture_output=True, timeout=timeout)
+    ejecutar([soffice, "--headless", "--convert-to", formato, "--outdir", str(carpeta), str(ruta)], timeout)
     salida = carpeta / f"{ruta.stem}.{formato}"
+    if not salida.exists():
+        global ultimo_error
+        ultimo_error = ultimo_error or f"LibreOffice no produjo {salida.name}."
+        print(f"[libreoffice] {ruta.name} → {formato}: {ultimo_error}", file=sys.stderr, flush=True)
     return salida if salida.exists() else None
+
+
+ultimo_error = ""      # motivo de la última conversión fallida (para mostrarlo en la app)
+
+
+def ejecutar(args: list[str], timeout: int) -> bool:
+    """Corre LibreOffice con un perfil propio y desechable, y lo mata entero si se pasa del tiempo.
+
+    - Perfil propio: si otro LibreOffice quedó abierto (o colgado) con el perfil por defecto, una llamada nueva le
+      pasa el trabajo y sale sin convertir nada; con perfil propio cada conversión es independiente.
+    - Grupo de procesos: «soffice» es un lanzador que abre «soffice.bin»; matar solo el lanzador al vencer el tiempo
+      dejaba vivo a soffice.bin, que seguía ocupando memoria y bloqueaba las conversiones siguientes.
+    """
+    global ultimo_error
+    ultimo_error = ""
+    perfil = Path(tempfile.mkdtemp(prefix="lo_perfil_"))
+    cmd = [args[0], f"-env:UserInstallation={perfil.as_uri()}", "--norestore", "--nolockcheck", *args[1:]]
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+    try:
+        _, err = proc.communicate(timeout=timeout)
+        if proc.returncode:
+            ultimo_error = (err or b"").decode(errors="replace").strip()[-400:] or f"código de salida {proc.returncode}"
+            if proc.returncode < 0:
+                ultimo_error = (f"LibreOffice se cerró de golpe (señal {-proc.returncode}); en un servidor pequeño "
+                                f"suele ser falta de memoria. {ultimo_error}")
+        return proc.returncode == 0
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except OSError:
+            proc.kill()
+        proc.communicate()
+        ultimo_error = f"LibreOffice tardó más de {timeout} s y se detuvo."
+        return False
+    finally:
+        shutil.rmtree(perfil, ignore_errors=True)
 
 
 # ------------------------------------------------------------------ anclas de imágenes
@@ -172,8 +215,8 @@ def imagenes_vectoriales(ruta: Path, hoja: str, timeout: int = 240) -> list[dict
                     f = d / f"img{k}{Path(media).suffix.lower()}"
                     f.write_bytes(z.read(media))
                     origen.append((f, media, ancla))
-                subprocess.run([buscar(), "--headless", "--convert-to", "png", "--outdir", str(d)]
-                               + [str(f) for f, _, _ in origen], capture_output=True, timeout=timeout)
+                ejecutar([buscar(), "--headless", "--convert-to", "png", "--outdir", str(d)]
+                         + [str(f) for f, _, _ in origen], timeout)
                 out = []
                 for f, media, ancla in origen:
                     png = f.with_suffix(".png")
