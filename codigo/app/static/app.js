@@ -13,8 +13,11 @@ async function api(ruta, opciones = {}) {
   const r = await fetch(ruta, opciones);
   if (r.status === 401 && !ruta.startsWith("/api/login")) { mostrarAcceso("login", "Su sesión venció. Ingrese de nuevo."); throw new Error("Sesión vencida."); }
   if (!r.ok) {
-    let m = r.statusText;
-    try { m = (await r.json()).detail || m; } catch (_) {}
+    let m = "";
+    try { m = (await r.json()).detail || ""; } catch (_) {}
+    if (!m) m = [502, 503, 504].includes(r.status)
+      ? `El servidor no respondió (error ${r.status}). Es probable que se haya reiniciado en medio del proceso, por ejemplo por falta de memoria. Espere un minuto y vuelva a intentarlo; si se repite, revise los registros del servidor.`
+      : `Error ${r.status}${r.statusText ? " " + r.statusText : ""} del servidor.`;
     throw new Error(typeof m === "string" ? m : JSON.stringify(m));
   }
   return r.json();
@@ -235,11 +238,11 @@ async function cargarCliente() {
     st.pestana = b.dataset.p;
     document.querySelectorAll(".pestanas button").forEach((x) => x.classList.toggle("activa", x === b));
     ["decision", "diapositivas", "comunicaciones", "borrador", "ficha", "mapa"].forEach((k) => ($("#p-" + k).hidden = k !== b.dataset.p));
-    if (b.dataset.p === "diapositivas") pintarDiapositivas(cid, d.ficha);
+    if (b.dataset.p === "diapositivas") pintarDiapositivas(cid, d.ficha, "actual", !!arch.pptx);
     if (b.dataset.p === "mapa") pintarMapa(cid);
     if (b.dataset.p === "comunicaciones") pintarComunicaciones(cid);
   });
-  if (pest === "diapositivas") pintarDiapositivas(cid, d.ficha);
+  if (pest === "diapositivas") pintarDiapositivas(cid, d.ficha, "actual", !!arch.pptx);
   if (pest === "comunicaciones") pintarComunicaciones(cid);
   if (pest === "mapa") pintarMapa(cid);
   pintarBorrador(d, cid, pendiente);
@@ -295,8 +298,15 @@ $("#cl-select").onchange = () => (location.hash = "cliente/" + $("#cl-select").v
 
 // Visor y editor de diapositivas: las ediciones se guardan en una copia que se envía como informe final al aprobar.
 const digitos = (t) => (String(t).match(/\d[\d.,]*/g) || []).sort().join("|");
-async function pintarDiapositivas(cid, ficha, version = "actual") {
+async function pintarDiapositivas(cid, ficha, version = "actual", hayInforme = true) {
   const caja = $("#p-diapositivas");
+  if (!hayInforme) {
+    caja.innerHTML = `<div class="caja"><h2>Todavía no hay diapositivas</h2>
+      <p>Este cliente aún no tiene informe en ${esc(textoPeriodo(periodo()))}: las diapositivas se generan al validar el Excel.</p>
+      <p class="nota">Vaya a <b>Cargar y validar</b>, elija el cliente y pulse validar (o use «Validar todo el lote» en el Panel del lote). Si ya lo validó y el estado sigue en «Recibido», la validación no terminó: vuelva a intentarlo y fíjese en el mensaje de error.</p>
+      <div class="grupo"><a class="btn" href="#cargar">Ir a Cargar y validar</a></div></div>`;
+    return;
+  }
   if (st.dCliente !== cid + periodo()) { st.dCliente = cid + periodo(); st.dActual = 1; st.cambios = {}; }
   caja.innerHTML = `<div class="caja"><p class="vacio">Preparando las diapositivas… la primera vez toma unos segundos.</p></div>`;
   let D;
